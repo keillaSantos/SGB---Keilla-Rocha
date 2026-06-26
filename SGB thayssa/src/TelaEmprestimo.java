@@ -110,7 +110,7 @@ public class TelaEmprestimo extends JFrame {
             );
         });
 
-       //Nesse botao se o prazo de entrega não for comprimido aparece uma menssagem e exibi uma multa de 15 reais, caso não aparece dizendo que o livro foi devolvido dentro do prazo.
+        //Nesse botao se o prazo de entrega não for comprimido aparece uma menssagem e exibi uma multa de 15 reais, caso não aparece dizendo que o livro foi devolvido dentro do prazo.
         btnDevolver.addActionListener(e -> {
 
             LocalDate hoje = LocalDate.now();
@@ -141,5 +141,6 @@ public class TelaEmprestimo extends JFrame {
 
     }
 }
+
 
 

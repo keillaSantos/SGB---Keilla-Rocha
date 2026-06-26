@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-
 public class TelaBiblioteca extends JFrame {
 
     private JTextField txtCodigo;
@@ -11,179 +9,241 @@ public class TelaBiblioteca extends JFrame {
 
     private JTextArea areaLivros;
 
-    private ArrayList<String> livros;
+    private Biblioteca biblioteca;
 
+    //Criação da janela
     public TelaBiblioteca() {
 
-        livros = new ArrayList<>();
+        biblioteca = new Biblioteca();
 
-        //Criação da janela
-        setTitle("Biblioteca");
+        setTitle("Sistema Gerencial de Biblioteca");
         setSize(700, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
 
-        // Título
-        JLabel titulo = new JLabel("BIBLIOTECA");
-        titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 24));
-        titulo.setForeground(Color.BLUE);
 
-        // Painel dos campos
+
+
+        //Titulo blibioteca
+        JLabel titulo = new JLabel("BIBLIOTECA", SwingConstants.CENTER);
+        titulo.setOpaque(true);
+        titulo.setBackground(new Color(0, 102, 204));
+        titulo.setForeground(Color.WHITE);
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+
+
         JPanel painel = new JPanel();
-        painel.setLayout(new GridLayout(6, 2, 5, 5));
+        painel.setLayout(new GridLayout(7, 2, 10, 10));
 
-        painel.add(new JLabel("Código:"));
+        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+
+
+        // Atributos dos livros e a criação dos seus campos
+        painel.add(new JLabel("Código"));
         txtCodigo = new JTextField();
         painel.add(txtCodigo);
 
-        painel.add(new JLabel("Título:"));
+        painel.add(new JLabel("Título"));
         txtTitulo = new JTextField();
         painel.add(txtTitulo);
 
-        painel.add(new JLabel("Autor:"));
+        painel.add(new JLabel("Autor"));
         txtAutor = new JTextField();
         painel.add(txtAutor);
 
-        painel.add(new JLabel("Ano:"));
+        painel.add(new JLabel("Ano"));
         txtAno = new JTextField();
         painel.add(txtAno);
 
-        //botões
-        JButton btnCadastrar = new JButton("Cadastrar");
-        JButton btnListar = new JButton("Listar");
-        JButton btnBuscar = new JButton("Buscar");
-        JButton btnRemover = new JButton("Remover");
 
+
+        //todos os botões
+        JButton btnCadastrar = new JButton("Cadastrar Livro");
+        JButton btnListar = new JButton("Listar Livros");
+        JButton btnBuscar = new JButton("Buscar Livros");
+        JButton btnEmprestimo = new JButton("→ Aba de Empréstimos");
+        JButton btnRemover = new JButton("Remover Livro");
+
+
+
+
+        //add botões
         painel.add(btnCadastrar);
         painel.add(btnListar);
+
         painel.add(btnBuscar);
         painel.add(btnRemover);
 
-        // Painel de cima
-        JPanel painelSuperior = new JPanel(new BorderLayout());
-        painelSuperior.add(titulo, BorderLayout.NORTH);
-        painelSuperior.add(painel, BorderLayout.CENTER);
+        painel.add(btnEmprestimo);
+        painel.add(new JLabel(""));
 
-        add(painelSuperior, BorderLayout.NORTH);
 
-        // Área
+
+        // design dos botoes
+        btnCadastrar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnListar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnBuscar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnRemover.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnEmprestimo.setFont(new Font("Segoe UI", Font.BOLD, 12));
+
+        //BORDA DOS BOTOES
+        btnCadastrar.setFocusPainted(false);
+        btnListar.setFocusPainted(false);
+        btnBuscar.setFocusPainted(false);
+        btnRemover.setFocusPainted(false);
+        btnEmprestimo.setFocusPainted(false);
+
+
+
+        //area do texto
         areaLivros = new JTextArea();
         areaLivros.setEditable(false);
-        areaLivros.setFont(new Font("Arial", Font.PLAIN, 14));
-
         JScrollPane scroll = new JScrollPane(areaLivros);
-        scroll.setBorder(
-                BorderFactory.createTitledBorder("Livros Cadastrados")
-        );
 
+
+
+        //painel
+        JPanel topo = new JPanel(new BorderLayout());
+
+        topo.add(titulo, BorderLayout.NORTH);
+        topo.add(painel, BorderLayout.CENTER);
+
+        add(topo, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
-        // Evento do botão cadastrar
-        btnCadastrar.addActionListener(e -> {
 
-            String livro =
-                    "Código: " + txtCodigo.getText()
-                            + " | Título: " + txtTitulo.getText()
-                            + " | Autor: " + txtAutor.getText()
-                            + " | Ano: " + txtAno.getText();
 
-            livros.add(livro);
+        //chamar as informações dos botões
+        btnCadastrar.addActionListener(e -> cadastrarLivro());
 
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Livro cadastrado com sucesso!"
-            );
+        btnListar.addActionListener(e -> listarLivros());
 
-            txtCodigo.setText("");
-            txtTitulo.setText("");
-            txtAutor.setText("");
-            txtAno.setText("");
+        btnBuscar.addActionListener(e -> Buscarlivro());
+
+        btnRemover.addActionListener(e -> removerLivro());
+
+
+        btnEmprestimo.addActionListener(e -> {
+            TelaEmprestimo tela = new TelaEmprestimo();
+            tela.setVisible(true);
         });
 
-        // Evento do botão listar
-        btnListar.addActionListener(e -> {
+    }
 
-            areaLivros.setText("");
+    // VOIDS
+    private void cadastrarLivro() {
 
-            if (livros.isEmpty()) {
-                areaLivros.setText("Nenhum livro cadastrado.");
-            } else {
-                for (String livro : livros) {
-                    areaLivros.append(livro + "\n");
-                }
-            }
-        });
+        int codigo = Integer.parseInt(txtCodigo.getText());
+        String titulo = txtTitulo.getText();
+        String autor = txtAutor.getText();
+        int ano = Integer.parseInt(txtAno.getText());
 
-        // Evento do botão Buscar
-        btnBuscar.addActionListener(e -> {
+        Livro livro = new Livro(
+                codigo,
+                titulo,
+                autor,
+                ano
+        );
 
-            String tituloBusca = JOptionPane.showInputDialog(
-                    "Digite o título do livro:"
-            );
+        biblioteca.adicionarLivro(livro);
 
-            boolean encontrado = false;
+        JOptionPane.showMessageDialog(
+                this,
+                "Livro cadastrado com sucesso!"
+        );
 
-            for (String livro : livros) {
+        limparCampos();
+    }
 
-                if (livro.toLowerCase()
-                        .contains(tituloBusca.toLowerCase())) {
+    private void listarLivros() {
 
-                    JOptionPane.showMessageDialog(
-                            null,
-                            livro
-                    );
+        areaLivros.setText("");
 
-                    encontrado = true;
-                    break;
-                }
-            }
+        areaLivros.append("Total de livros cadastrados: "
+                + biblioteca.getLivros().size() + "\n\n");
 
-            if (!encontrado) {
+        for (Livro livro : biblioteca.getLivros()) {
+            areaLivros.append(livro + "\n");
+        }
+    }
+
+    private void limparCampos() {
+        txtCodigo.setText("");
+        txtTitulo.setText("");
+        txtAutor.setText("");
+        txtAno.setText("");
+    }
+
+    private void Buscarlivro() {
+
+        String busca = JOptionPane.showInputDialog(
+                this,
+                "Informe o título do livro:"
+        );
+
+        boolean encontrado = false;
+
+        for (Livro livro : biblioteca.getLivros()) {
+
+            if (livro.getTitulo().equalsIgnoreCase(busca)) {
+
                 JOptionPane.showMessageDialog(
-                        null,
-                        "Livro não encontrado."
+                        this,
+                        "Livro encontrado!\n\n" +
+                                "Código: " + livro.getCodigo() + "\n" +
+                                "Título: " + livro.getTitulo() + "\n" +
+                                "Autor: " + livro.getAutor() + "\n" +
+                                "Ano: " + livro.getAno()
                 );
+
+                encontrado = true;
+                break;
             }
+        }
 
-        });
-
-        // Evento do botão remover
-        btnRemover.addActionListener(e -> {
-
-            String tituloRemover = JOptionPane.showInputDialog(
-                    "Digite o título do livro:"
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Livro não encontrado!"
             );
+        }
 
-            for (int i = 0; i < livros.size(); i++) {
+    }
 
-                if (livros.get(i).toLowerCase()
-                        .contains(tituloRemover.toLowerCase())) {
+    private void removerLivro() {
 
-                    livros.remove(i);
+        String busca = JOptionPane.showInputDialog(
+                this,
+                "Informe o título do livro para remover:"
+        );
 
-                    JOptionPane.showMessageDialog(
-                            null,
-                            "Livro removido."
-                    );
+        Livro remover = null;
 
-                    return;
-                }
+        for (Livro livro : biblioteca.getLivros()) {
+
+            if (livro.getTitulo().equalsIgnoreCase(busca)) {
+                remover = livro;
+                break;
             }
+        }
+
+        if (remover != null) {
+
+            biblioteca.getLivros().remove(remover);
 
             JOptionPane.showMessageDialog(
-                    null,
-                    "Livro não encontrado."
+                    this,
+                    "Livro removido com sucesso!"
             );
 
-        });
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Livro não encontrado!"
+            );
+        }
     }
 
-    public static void main(String[] args) {
-
-        TelaBiblioteca tela = new TelaBiblioteca();
-        tela.setVisible(true);
-
-    }
 }
